@@ -16,7 +16,7 @@ public class App {
     private JButton button_quit;
     private JButton button_open;
     private JTextArea text_area;
-    
+
     public static void main(String[] args) {
         // todo: use args to get map file
 
