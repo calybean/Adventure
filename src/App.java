@@ -1,7 +1,5 @@
 import javax.swing.*;
-import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
 import java.awt.*;
 import java.awt.event.ActionListener;
 
@@ -18,7 +16,7 @@ public class App {
     private JButton button_quit;
     private JButton button_open;
     private JTextArea text_area;
-
+    
     public static void main(String[] args) {
         // todo: use args to get map file
 
