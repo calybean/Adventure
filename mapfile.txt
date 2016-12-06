@@ -10,7 +10,7 @@
 ~~~~fffffff.
 ~~~~~~~fffff
 60 60
-map1items.txt
+mapitems.txt
 .;plains;MapPics/plain.png;
 M;mountain;MapPics/mountain.png;
 f;forest;MapPics/forest.png;
