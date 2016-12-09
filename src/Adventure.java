@@ -108,7 +108,11 @@ public class Adventure extends JPanel {
         // todo: command line parameter!!!!!
 
 
-        // key bindings:
+        setupKeyBidings();
+    }
+
+    private void setupKeyBidings() {
+        // left key
         mFrame.getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(LEFT, "left");
         mFrame.getRootPane().getActionMap().put("left", new AbstractAction() {
             @Override
@@ -117,6 +121,8 @@ public class Adventure extends JPanel {
                 updateMap(mMap.currentRow, mMap.currentColumn);
             }
         });
+
+        // right key
         mFrame.getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(RIGHT, "right");
         mFrame.getRootPane().getActionMap().put("right", new AbstractAction() {
             @Override
@@ -125,6 +131,8 @@ public class Adventure extends JPanel {
                 updateMap(mMap.currentRow, mMap.currentColumn);
             }
         });
+
+        // up key
         mFrame.getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(UP, "up");
         mFrame.getRootPane().getActionMap().put("up", new AbstractAction() {
             @Override
@@ -133,6 +141,8 @@ public class Adventure extends JPanel {
                 updateMap(mMap.currentRow, mMap.currentColumn);
             }
         });
+
+        // down key
         mFrame.getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(DOWN, "down");
         mFrame.getRootPane().getActionMap().put("down", new AbstractAction() {
             @Override
@@ -204,9 +214,6 @@ public class Adventure extends JPanel {
         text_output.append(GAME_SAVED);
     }
 
-    // todo: output messages for dropping, taking, and error messages when user can't do one or the other.
-
-
     private void loadGame() {
         if (mSaveLocation == null) {
             text_output.append("Error: No file saved.\n");
@@ -270,7 +277,7 @@ public class Adventure extends JPanel {
             allItems.add(fileContents.get(index));
             index++;
         }
-        // clear out mItems and mImventory
+        // clear out mItems and mInventory
         mMap.mItems.clear();
         mMap.mInventory.clear();
         // separate all items into mItems and mInventory
@@ -324,15 +331,38 @@ public class Adventure extends JPanel {
                 }
             }
         } else if (command.toLowerCase().startsWith(TAKE)) {
-            mMap.take(command);
-            // check to make sure the item they want to take is actually here
-            // take item
-            // delete it from mMap.mItems
+            // get item from command
+            String[] parts = command.split("\\s+");
+            if (parts.length < 2) return;
+
+            String itemName = "";
+            for (int i = 1; i < parts.length; i++) {
+                itemName += parts[i] + " ";
+            }
+            itemName = itemName.trim();
+
+            // take it, output message
+            if (mMap.take(itemName)) {
+                text_output.append("You took " + itemName + ".\n");
+            } else {
+                text_output.append("You could not take " + itemName + ".\n");
+            }
         } else if (command.toLowerCase().startsWith(DROP)) {
-            mMap.drop(command);
-            // check to make sure they actually have the item they want to drop
-            // drop item
-            // add it to mMap.mItems (with new location)
+            // get item from command
+            String[] parts = command.split("\\s+");
+            if (parts.length < 2) return;
+
+            String itemName = "";
+            for (int i = 1; i < parts.length; i++) {
+                itemName += parts[i] + " ";
+            }
+            itemName = itemName.trim();
+            // drop it, output message
+            if (mMap.drop(itemName)) {
+                text_output.append("You dropped " + itemName + ".\n");
+            } else {
+                text_output.append("You could not drop " + itemName + ".\n");
+            }
         } else if (command.toLowerCase().startsWith(INVENTORY)) {
             // tell map to print inventory
             text_output.append(mMap.getInventory());

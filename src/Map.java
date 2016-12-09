@@ -85,22 +85,10 @@ class Map {
         return items;
     }
 
-    void take(String command) {
-        // split string up into go command and direction
-        String[] parts = command.split("\\s+");
+    // todo: output messages for dropping, taking, and error messages when user can't do one or the other.
 
-        if (parts.length < 2) {
-            return;
-        }
-
-        String itemName = "";
-        for (int i = 1; i < parts.length; i++) {
-            itemName += parts[i] + " ";
-        }
-        itemName = itemName.trim();
-
+    boolean take(String itemName) {
         boolean itemTaken = false;
-
         for (Item item : mItems) { // check for item in mItems
             if (itemName.equals(item.getName()) && currentRow == item.getRow() && currentColumn == item.getColumn()) {
                 // make a new item with invalid location info
@@ -111,47 +99,33 @@ class Map {
                 break;
             }
         }
-        if (itemTaken) {
-
-        }
+        return itemTaken;
     }
 
-    void drop(String command) {
-        // split string up into go command and direction
-        String[] parts = command.split("\\s+");
-
-        if (parts.length < 2) {
-            return;
-        }
-
-        String itemName = "";
-        for (int i = 1; i < parts.length; i++) {
-            itemName += parts[i] + " ";
-        }
-        itemName = itemName.trim();
-
+    boolean drop(String itemName) {
+        boolean itemDropped = false;
         for (Item item : mInventory) { // check for item in inventory
             if (itemName.equals(item.getName())) {
                 // add this item to the map at this location
                 mItems.add(new Item(itemName, currentRow, currentColumn));
                 // remove this item from the map
                 mInventory.remove(item);
+                itemDropped = true;
                 break;
             }
         }
+        return itemDropped;
     }
 
     Terrain getTerrainAt(int row, int column) {
         // if we're out of bounds:
-        if (row < 0 || column < 0) {
+        if (row < 0 || column < 0 || row > map.size() || column > map.get(0).length()) {
             for (Terrain terrain : terrains) {
                 if (terrain.getTerrainChar() == '-') {
                     return terrain;
                 }
             }
-        }
-        // if we're in bounds:
-        if (row < numRows && column < numColumns) {
+        } else if (row < numRows && column < numColumns) { // if we're in bounds:
             for (Terrain terrain : terrains) {
                 if (terrain.getTerrainChar() == map.get(row).charAt(column)) {
                     return terrain;
