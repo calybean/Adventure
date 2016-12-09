@@ -1,3 +1,4 @@
+0;0;a laptop;
 2;5;a dagger;
 4;7;a magic sword;
 2;5;a bag of coins;

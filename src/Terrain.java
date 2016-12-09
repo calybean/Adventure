@@ -9,9 +9,14 @@ class Terrain {
     Terrain(String terrainRow) {
         String elements[] = terrainRow.split(";", -1);
 
-        terrainChar = elements[0].charAt(0);
-        name = elements[1];
-        filePath = elements[2];
+        if (elements.length == 4) { // there's an empty one at the end, but we'll just ignore it.
+            terrainChar = elements[0].charAt(0);
+            name = elements[1];
+            filePath = elements[2];
+        } else {
+            System.out.print("Error parsing terrain row\n");
+            System.exit(1);
+        }
     }
 
     public char getTerrainChar() {

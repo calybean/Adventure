@@ -1,20 +1,24 @@
 /**
  * Created by Joey on 12/6/16
  */
-public class Item {
-    String name;
-    int row;
-    int column;
+class Item {
+    private String name;
+    private int row;
+    private int column;
 
-    Item(String itemRow) {
+    Item (String itemRow) {
         String elements[] = itemRow.split(";");
 
-        row = Integer.parseInt(elements[0]);
-        column = Integer.parseInt(elements[1]);
-        name = elements[2];
+        if (elements.length == 3) { // there's an empty one at the end
+            row = Integer.parseInt(elements[0]);
+            column = Integer.parseInt(elements[1]);
+            name = elements[2];
+        } else {
+            System.out.print("Error: invalid item file\n");
+        }
     }
 
-    Item(String name, int row, int column) {
+    Item (String name, int row, int column) {
         this.name = name;
         this.row = row;
         this.column = column;
@@ -42,5 +46,9 @@ public class Item {
 
     public void setColumn(int column) {
         this.column = column;
+    }
+
+    public String getItemRow() {
+        return row + ";" + column + ";" + name + ";";
     }
 }

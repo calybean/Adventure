@@ -6,9 +6,6 @@ import javax.swing.*;
 public class GameChar {
 
     // constants
-    private static final String OUT_OF_BOUNDS = "X";
-    private static final String YOU_ARE_CARRYING = "You are carrying:\n";
-    private static final String[] INVENTORY_ARRAY = {"brass lantern", "rope", "rations", "staff"};
     private static final String NORTH = "n";
     private static final String EAST = "e";
     private static final String SOUTH = "s";
@@ -32,67 +29,82 @@ public class GameChar {
         mOutput = output;
     }
 
-    void go(Map map, String command) {
-
+    char go(Map map, String command) {
         // split string up into go command and direction
         String[] parts = command.split("\\s+");
 
         // make sure they actually gave a direction
         if (parts.length > 1) {
             String direction = parts[1];
-
             if (direction.toLowerCase().startsWith(NORTH)) {
-                if (map.currentRow > MIN_LAT_LNG) {
-                    // if there's room, move
-                    map.currentRow -= 1;
-                    mOutput.append(MOVING_NORTH);
-                } else {
-                    // can't go that far
-                    mOutput.append(ERROR_TOO_FAR_NORTH);
-                }
+                return goNorth(map);
             } else if (direction.toLowerCase().startsWith(EAST)) {
-                if (map.currentColumn < map.numColumns - 1) {
-                    // if there's room, move
-                    map.currentColumn += 1;
-                    mOutput.append(MOVING_EAST);
-                } else {
-                    // can't go that far
-                    mOutput.append(ERROR_TOO_FAR_EAST);
-                }
+                return goEast(map);
             } else if (direction.toLowerCase().startsWith(SOUTH)) {
-                if (map.currentRow < map.numRows - 1) {
-                    // if there's room, move
-                    map.currentRow += 1;
-                    mOutput.append(MOVING_SOUTH);
-                } else {
-                    // can't go that far
-                    mOutput.append(ERROR_TOO_FAR_SOUTH);
-                }
+                return goSouth(map);
             } else if (direction.toLowerCase().startsWith(WEST)) {
-                if (map.currentColumn > MIN_LAT_LNG) {
-                    // if there's room, move
-                    map.currentColumn -= 1;
-                    mOutput.append(MOVING_WEST);
-                } else {
-                    // can't go that far
-                    mOutput.append(ERROR_TOO_FAR_WEST);
-                }
+                return goWest(map);
             } else {
                 // wasn't a valid direction.
                 mOutput.append(INVALID_DIRECTION);
+                return '-';
             }
         } else {
             // wasn't a valid direction.
             mOutput.append(INVALID_DIRECTION);
+            return '-';
         }
     }
 
-    String getInventory() {
-        String inventory = YOU_ARE_CARRYING;
-        // print inventory
-        for (String item : INVENTORY_ARRAY) {
-            inventory += item + '\n';
+    public char goNorth(Map map) {
+        if (map.currentRow > MIN_LAT_LNG) {
+            // if there's room, move
+            map.currentRow -= 1;
+            mOutput.append(MOVING_NORTH);
+            return 'n';
+        } else {
+            // can't go that far
+            mOutput.append(ERROR_TOO_FAR_NORTH);
+            return '-';
         }
-        return inventory;
+    }
+
+    public char goEast(Map map) {
+        if (map.currentColumn < map.numColumns - 1) {
+            // if there's room, move
+            map.currentColumn += 1;
+            mOutput.append(MOVING_EAST);
+            return 'e';
+        } else {
+            // can't go that far
+            mOutput.append(ERROR_TOO_FAR_EAST);
+            return '-';
+        }
+    }
+
+    public char goSouth(Map map) {
+        if (map.currentRow < map.numRows - 1) {
+            // if there's room, move
+            map.currentRow += 1;
+            mOutput.append(MOVING_SOUTH);
+            return 's';
+        } else {
+            // can't go that far
+            mOutput.append(ERROR_TOO_FAR_SOUTH);
+            return '-';
+        }
+    }
+
+    public char goWest(Map map) {
+        if (map.currentColumn > MIN_LAT_LNG) {
+            // if there's room, move
+            map.currentColumn -= 1;
+            mOutput.append(MOVING_WEST);
+            return 'w';
+        } else {
+            // can't go that far
+            mOutput.append(ERROR_TOO_FAR_WEST);
+            return '-';
+        }
     }
 }
