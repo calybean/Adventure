@@ -1,3 +1,11 @@
+// Joseph Cannon
+// CS 3250
+// 12/9/16
+// I declare that the following source code was written solely by me, or provided on
+// the course web site for this program. I understand that copying any source code,
+// in whole or in part, constitutes cheating, and that I will receive a zero grade
+// on this project if I am found in violation of this policy.
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.Dimension;
@@ -42,6 +50,7 @@ public class Adventure extends JPanel {
     private JButton button_open;
     private JTextArea text_output;
     private JTextField text_input;
+    private JButton button_use_arrows; // this is just to fix the focus issue
 
     // member variables
     private static String mFileName;
@@ -55,7 +64,12 @@ public class Adventure extends JPanel {
     private static final KeyStroke DOWN = KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0);
 
     public static void main(String[] args) {
-        // todo: use args to get map file
+        if (args.length > 0) {
+            mFileName = args[0];
+        } else {
+            System.out.print(ERROR_NO_ARGS);
+            System.exit(1);
+        }
 
         mFrame = new JFrame("Adventure - Joseph Cannon");
         mFrame.setContentPane(new Adventure().main_panel);
@@ -63,26 +77,16 @@ public class Adventure extends JPanel {
         mFrame.setPreferredSize(new Dimension(400,600));
         mFrame.pack();
         mFrame.setVisible(true);
-
-
-        if (args.length > 0) {
-            System.out.print("args.length > 0\n");
-            mFileName = args[0];
-        } else {
-            System.out.print(ERROR_NO_ARGS);
-//            System.exit(1);
-        }
     }
 
-    Adventure() {
+    private Adventure() {
         mMap = new Map();
 
         if (mFileName != null) {
             mMap.readInFile(mFileName);
         } else {
-            System.out.print("No map filename\n");
-            mFileName = "mapfile.txt";
-            mMap.readInFile(mFileName);
+            System.out.println("Error: No map filename");
+            System.exit(1);
         }
 
         // instantiate a gameChar object
@@ -104,11 +108,20 @@ public class Adventure extends JPanel {
         button_open.addActionListener((java.awt.event.ActionEvent e) -> loadGame());
         button_quit.addActionListener((java.awt.event.ActionEvent e) -> System.exit(0));
 
-
-        // todo: command line parameter!!!!!
-
-
         setupKeyBidings();
+    }
+
+    private void updateMap(int row, int column) {
+        // clear map panel and start over
+        map_panel.removeAll();
+        for (int i = 0; i < 5; i++) { // row
+            for (int j = 0; j < 5; j++) { // column
+                Terrain terrain = mMap.getTerrainAt(i + row - 2, j + column - 2);
+                map_panel.add(new JLabel(new ImageIcon(terrain.getFilePath())));
+            }
+        }
+        // update UI
+        mFrame.revalidate();
     }
 
     private void setupKeyBidings() {
@@ -117,8 +130,12 @@ public class Adventure extends JPanel {
         mFrame.getRootPane().getActionMap().put("left", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                text_output.append("> go west\n");
                 mGameChar.goWest(mMap);
                 updateMap(mMap.currentRow, mMap.currentColumn);
+                // check for an item here:
+                checkForItem();
+                outputLocation();
             }
         });
 
@@ -127,8 +144,12 @@ public class Adventure extends JPanel {
         mFrame.getRootPane().getActionMap().put("right", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                text_output.append("> go east\n");
                 mGameChar.goEast(mMap);
                 updateMap(mMap.currentRow, mMap.currentColumn);
+                // check for an item here:
+                checkForItem();
+                outputLocation();
             }
         });
 
@@ -137,8 +158,12 @@ public class Adventure extends JPanel {
         mFrame.getRootPane().getActionMap().put("up", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                text_output.append("> go north\n");
                 mGameChar.goNorth(mMap);
                 updateMap(mMap.currentRow, mMap.currentColumn);
+                // check for an item here:
+                checkForItem();
+                outputLocation();
             }
         });
 
@@ -147,8 +172,12 @@ public class Adventure extends JPanel {
         mFrame.getRootPane().getActionMap().put("down", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                text_output.append("> go south\n");
                 mGameChar.goSouth(mMap);
                 updateMap(mMap.currentRow, mMap.currentColumn);
+                // check for an item here:
+                checkForItem();
+                outputLocation();
             }
         });
     }
@@ -229,7 +258,6 @@ public class Adventure extends JPanel {
                 List<String> fileContents = new ArrayList<>();
                 String currentLine;
                 while ((currentLine = bufferedReader.readLine()) != null) {
-                    System.out.println(currentLine);
                     fileContents.add(currentLine);
                 }
 
@@ -246,6 +274,7 @@ public class Adventure extends JPanel {
             text_output.append("Error: No file saved.\n");
         }
         text_output.append(GAME_LOADED);
+        outputLocation();
     }
 
     private void restoreGameFromFile(List<String> fileContents) {
@@ -290,23 +319,6 @@ public class Adventure extends JPanel {
         }
     }
 
-    private void updateMap(int row, int column) {
-        // clear map panel and start over
-        map_panel.removeAll();
-
-        JLabel imageArray[] = new JLabel[25];
-        for (int i = 0; i < 5; i++) { // row
-            for (int j = 0; j < 5; j++) { // column
-                // todo: account for the bottom and right out of bounds
-                Terrain terrain = mMap.getTerrainAt(i + row - 2, j + column - 2);
-                imageArray[(i * 5) + j] = new JLabel(new ImageIcon(terrain.getFilePath()));
-                map_panel.add(imageArray[(i * 5) + j]);
-            }
-        }
-        // update UI
-        mFrame.revalidate();
-    }
-
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -325,11 +337,7 @@ public class Adventure extends JPanel {
             // when the player moves, update the map
             updateMap(mMap.currentRow, mMap.currentColumn);
             // check for an item here:
-            for (Item item : mMap.mItems) {
-                if (item.getRow() == mMap.currentRow && item.getColumn() == mMap.currentColumn) {
-                    text_output.append("There is " + item.getName() + " at this location.\n");
-                }
-            }
+            checkForItem();
         } else if (command.toLowerCase().startsWith(TAKE)) {
             // get item from command
             String[] parts = command.split("\\s+");
@@ -373,6 +381,19 @@ public class Adventure extends JPanel {
         } else {
             text_output.append(INVALID_COMMAND + command + '\n');
         }
+        outputLocation();
+    }
+
+    private void checkForItem() {
+        // check for an item here:
+        for (Item item : mMap.mItems) {
+            if (item.getRow() == mMap.currentRow && item.getColumn() == mMap.currentColumn) {
+                text_output.append("There is " + item.getName() + " at this location.\n");
+            }
+        }
+    }
+
+    private void outputLocation() {
         // print location and terrain
         text_output.append("You are at location " +
                 mMap.currentRow +

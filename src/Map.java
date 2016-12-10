@@ -1,3 +1,11 @@
+// Joseph Cannon
+// CS 3250
+// 12/9/16
+// I declare that the following source code was written solely by me, or provided on
+// the course web site for this program. I understand that copying any source code,
+// in whole or in part, constitutes cheating, and that I will receive a zero grade
+// on this project if I am found in violation of this policy.
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -85,8 +93,6 @@ class Map {
         return items;
     }
 
-    // todo: output messages for dropping, taking, and error messages when user can't do one or the other.
-
     boolean take(String itemName) {
         boolean itemTaken = false;
         for (Item item : mItems) { // check for item in mItems
@@ -119,7 +125,7 @@ class Map {
 
     Terrain getTerrainAt(int row, int column) {
         // if we're out of bounds:
-        if (row < 0 || column < 0 || row > map.size() || column > map.get(0).length()) {
+        if (row < 0 || column < 0 || row > map.size() - 1 || column > map.get(0).length() - 1) {
             for (Terrain terrain : terrains) {
                 if (terrain.getTerrainChar() == '-') {
                     return terrain;

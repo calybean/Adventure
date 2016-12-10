@@ -1,3 +1,11 @@
+// Joseph Cannon
+// CS 3250
+// 12/9/16
+// I declare that the following source code was written solely by me, or provided on
+// the course web site for this program. I understand that copying any source code,
+// in whole or in part, constitutes cheating, and that I will receive a zero grade
+// on this project if I am found in violation of this policy.
+
 /**
  * Created by Joey on 12/6/16
  */

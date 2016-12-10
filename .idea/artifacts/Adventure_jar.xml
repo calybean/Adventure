@@ -1,0 +1,15 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Adventure:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/Adventure_jar</output-path>
+    <root id="archive" name="Adventure.jar">
+      <element id="module-output" name="Adventure" />
+      <element id="file-copy" path="$PROJECT_DIR$/src/Adventure.form" />
+      <element id="file-copy" path="$PROJECT_DIR$/src/Adventure.java" />
+      <element id="file-copy" path="$PROJECT_DIR$/src/GameChar.java" />
+      <element id="file-copy" path="$PROJECT_DIR$/src/Item.java" />
+      <element id="file-copy" path="$PROJECT_DIR$/src/Map.java" />
+      <element id="file-copy" path="$PROJECT_DIR$/src/Terrain.java" />
+      <element id="file-copy" path="$PROJECT_DIR$/src/README.md" />
+    </root>
+  </artifact>
+</component>
